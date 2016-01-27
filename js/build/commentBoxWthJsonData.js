@@ -3,6 +3,47 @@
  * @description ReactJs Lessons
  */
 
+var XhrReqHandler = function (url, callback) {
+
+  /*
+    Description:
+    XMLHttpRequest is an API that provides client functionality for transferring data between a client and a server. It provides an easy way to retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just a part of the page without disrupting what the user is doing. XMLHttpRequest is used heavily in AJAX programming.
+  
+    XMLHttpRequest was originally designed by Microsoft and adopted by Mozilla, Apple, and Google. It's now being standardized at the WHATWG. Despite its name, XMLHttpRequest can be used to retrieve any type of data, not just XML, and it supports protocols other than HTTP (including file and ftp).
+  
+    Syntax:
+    var myRequest = new XMLHttpRequest();
+  */
+
+  var xhrProgress = function (ev) {
+    if (ev.lengthComputable) {
+      var percComplete = ev.loaded / ev.total;
+      console.log(percComplete);
+    } else {
+      console.log("Progress Can not be tracked");
+    }
+  };
+  var xhrComplete = function (ev) {
+    callback.call(this, xhr.responseText);
+  };
+  var xhrFailed = function (ev) {
+    console.log("Error in Xhr Request " + xhr.status);
+  };
+  var xhrCanceled = function (ev) {
+    console.log("Cancelled Request");
+  };
+
+  var xhr = new XMLHttpRequest();
+
+  url = "http://localhost:90/ReactLearnings/" + url;
+  xhr.addEventListener("progress", xhrProgress);
+  xhr.addEventListener("load", xhrComplete);
+  xhr.addEventListener("error", xhrFailed);
+  xhr.addEventListener("abort", xhrCanceled);
+  xhr.open("GET", url);
+  xhr.send();
+};
+
 var data = [{
   idx: 1,
   author: "Singh Piara",
@@ -64,7 +105,9 @@ var CommentList = React.createClass({
       return React.createElement(
         Comment,
         { author: comment.author, key: comment.idx },
-        comment.text
+        comment.text,
+        " ",
+        comment.idx
       );
     });
 
@@ -79,6 +122,9 @@ var CommentList = React.createClass({
 var CommentBox = React.createClass({
   displayName: "CommentBox",
 
+  getInitialState: function () {
+    return { data: [] };
+  },
   render: function () {
     return React.createElement(
       "div",

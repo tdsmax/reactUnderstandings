@@ -5,16 +5,6 @@
 
 var XhrReqHandler = function (url, callback) {
 
-  /*
-    Description:
-    XMLHttpRequest is an API that provides client functionality for transferring data between a client and a server. It provides an easy way to retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just a part of the page without disrupting what the user is doing. XMLHttpRequest is used heavily in AJAX programming.
-  
-    XMLHttpRequest was originally designed by Microsoft and adopted by Mozilla, Apple, and Google. It's now being standardized at the WHATWG. Despite its name, XMLHttpRequest can be used to retrieve any type of data, not just XML, and it supports protocols other than HTTP (including file and ftp).
-  
-    Syntax:
-    var myRequest = new XMLHttpRequest();
-  */
-
   var xhrProgress = function (ev) {
     if (ev.lengthComputable) {
       var percComplete = ev.loaded / ev.total;
@@ -44,19 +34,36 @@ var XhrReqHandler = function (url, callback) {
   xhr.send();
 };
 
-var data = [{
-  idx: 1,
-  author: "Singh Piara",
-  text: "This is First Comment"
-}, {
-  idx: 2,
-  author: "Singh Lakha",
-  text: "This is Second Comment"
-}, {
-  idx: 3,
-  author: "Singh Basant",
-  text: "This is Third Comment"
-}];
+var XhrPostHandler = function (url, callback, data) {
+
+  var xhrProgress = function (ev) {
+    if (ev.lengthComputable) {
+      var percComplete = ev.loaded / ev.total;
+      console.log(percComplete);
+    } else {
+      console.log("Progress Can not be tracked");
+    }
+  };
+  var xhrComplete = function (ev) {
+    callback.call(this, xhr.responseText);
+  };
+  var xhrFailed = function (ev) {
+    console.log("Error in Xhr Request " + xhr.status);
+  };
+  var xhrCanceled = function (ev) {
+    console.log("Cancelled Request");
+  };
+
+  var xhr = new XMLHttpRequest();
+
+  url = "http://localhost:90/ReactLearnings/" + url;
+  xhr.addEventListener("progress", xhrProgress);
+  xhr.addEventListener("load", xhrComplete);
+  xhr.addEventListener("error", xhrFailed);
+  xhr.addEventListener("abort", xhrCanceled);
+  xhr.open("POST", url);
+  xhr.send(data);
+};
 
 /** Component That recieves properties from its parent */
 var Comment = React.createClass({
@@ -84,15 +91,37 @@ var Comment = React.createClass({
 var CommentForm = React.createClass({
   displayName: "CommentForm",
 
+  getInitialState: function () {
+    return { author: '', text: '' };
+  },
+  handleAuthorChange: function (e) {
+    this.setState({ author: e.target.value });
+  },
+  handleCommentChange: function (e) {
+    this.setState({ text: e.target.value });
+  },
+  handleSubmit: function (e) {
+    e.preventDefault();
+    var author = this.state.author.trim(),
+        text = this.state.text.trim();
+    if (!text || !author) {
+      return;
+    }
+    this.props.onCommentSubmit({ author: author, text: text });
+    this.setState({ author: '', text: '' });
+  },
   render: function () {
     return React.createElement(
-      "div",
-      { className: "commentForm" },
+      "form",
+      { className: "commentForm", onSubmit: this.handleSubmit },
       React.createElement(
         "h2",
         null,
         " Here we will bring a comment Form "
-      )
+      ),
+      React.createElement("input", { type: "text", value: this.state.author, onChange: this.handleAuthorChange, placeholder: "enter your full name" }),
+      React.createElement("input", { type: "text", value: this.state.text, onChange: this.handleCommentChange, placeholder: "Say something" }),
+      React.createElement("input", { type: "submit", value: "post" })
     );
   }
 });
@@ -125,6 +154,23 @@ var CommentBox = React.createClass({
   getInitialState: function () {
     return { data: [] };
   },
+  loadFromServer: function () {
+    XhrReqHandler(this.props.url, this.tester);
+  },
+  componentDidMount: function () {
+    this.loadFromServer();
+    setInterval(this.loadFromServer, this.props.pollInterval);
+  },
+  handleCommentSubmit: function (comment) {
+    var comments = this.state.data;
+    comment.idx = parseInt(comments[comments.length - 1].idx) + 1;
+    var newComments = comments.concat([comment]);
+    this.setState({ data: newComments });
+    XhrPostHandler(this.props.postUrl, this.tester, comment);
+  },
+  tester: function (data) {
+    this.setState({ data: JSON.parse(data) });
+  },
   render: function () {
     return React.createElement(
       "div",
@@ -134,10 +180,10 @@ var CommentBox = React.createClass({
         null,
         " Comment "
       ),
-      React.createElement(CommentList, { data: this.props.data }),
-      React.createElement(CommentForm, null)
+      React.createElement(CommentList, { data: this.state.data }),
+      React.createElement(CommentForm, { onCommentSubmit: this.handleCommentSubmit })
     );
   }
 });
 
-ReactDOM.render(React.createElement(CommentBox, { data: data }), document.getElementById("content"));
+ReactDOM.render(React.createElement(CommentBox, { pollInterval: 2000, postUrl: "server/postComments.php", url: "js/json/data.json" }), document.getElementById("content"));

@@ -1,0 +1,96 @@
+{
+	"id": "H1OLN8MSCSSB",
+	"name": "test hotel",
+	"description": "desc",
+	"starRating": 0,
+	"address": {
+		"address1": "add1",
+		"address2": null,
+		"cityCode": "10",
+		"region": null,
+		"postalCode": null,
+		"latitude": 0.0,
+		"longitude": 0.0
+	},
+	"hotelCommunication": {
+		"phones": "123123",
+		"emails": "dsad",
+		"fax": null,
+		"website": null
+	},
+	"hotelAmenities": [],
+	"rooms": [{
+		"busc": "R1OL0M4ORZ6Z",
+		"type": "Delux prime",
+		"roomAmenities": [{
+			"name": "WiFi",
+			"description": "Swimming pool"
+		}, {
+			"name": "breakfast",
+			"description": "breakfast"
+		}, {
+			"name": "AMENITY2",
+			"description": "Ame-2 desc"
+		}],
+		"roomImages": [],
+		"serviceOffers": [{
+			"adultCount": 2,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 136230.800000,
+			"soi": "137c35ff-55b6-45a1-b736-301b16f99ebb",
+			"supplierCode": "MMT",
+			"available": true
+		}, {
+			"adultCount": 1,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 163476.960000,
+			"soi": "27643539-717a-4bbe-90ac-78ccd382b4f4",
+			"supplierCode": "MMT",
+			"available": true
+		}, {
+			"adultCount": 2,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 197534.660000,
+			"soi": "357719e5-33bb-475d-822e-509dbcd9ffd8",
+			"supplierCode": "MMT",
+			"available": true
+		}, {
+			"adultCount": 1,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 156665.420000,
+			"soi": "4758e191-0b45-47ff-bb41-212cabd608da",
+			"supplierCode": "MMT",
+			"available": true
+		}, {
+			"adultCount": 1,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 163476.960000,
+			"soi": "60fc3724-51f3-4df7-8596-09b0ae550eb9",
+			"supplierCode": "MMT",
+			"available": true
+		}, {
+			"adultCount": 1,
+			"childCount": 0,
+			"quantity": 0,
+			"price": 163476.960000,
+			"soi": "ed0da9c0-6287-4261-96fe-31391fa87540",
+			"supplierCode": "MMT",
+			"available": true
+		}]
+	}],
+	"review": {
+		"reviewDetailDTOs": [],
+		"rank": 0,
+		"componentId": null,
+		"componentType": null,
+		"totalRank": 0,
+		"place": null,
+		"totalElements": 0,
+		"averageRating": 0.0
+	}
+}
